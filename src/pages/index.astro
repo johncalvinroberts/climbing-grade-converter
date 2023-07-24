@@ -1,15 +1,84 @@
 ---
+import ClimbingGradeConverter from "../components/GradeConverter.svelte";
+import "@fontsource/space-mono";
 ---
 
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Climbing Grade Converter</title>
+    <script src="../lib/set-default-color-scheme.ts"></script>
+  </head>
+  <body>
+    <main>
+      <div>
+        <h1>Climbing Grade Converter</h1>
+        <ClimbingGradeConverter client:visible />
+      </div>
+    </main>
+  </body>
+  <style is:global>
+    /* Box sizing rules */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    /* Remove default margin */
+    body,
+    h1,
+    h2,
+    h3,
+    h4,
+    p,
+    figure,
+    blockquote,
+    dl,
+    dd {
+      margin: 0;
+    }
+
+    :root {
+      --bg-color: hsl(273, 37%, 93%);
+      --text-color: rgb(69, 66, 87);
+      --text-color-contrast: #27272c;
+      --input-bg: hsl(246, 96%, 88%);
+      --border: hsl(246, 11%, 12%);
+      font-size: 10px;
+    }
+
+    body {
+      min-height: 100dvh;
+      font-family: "Space Mono", sans-serif;
+      font-size: 1.4rem;
+      color: var(--text-color);
+      background: var(--bg-color);
+    }
+
+    ::selection {
+      background: var(--text-color);
+      color: var(--bg-color);
+    }
+
+    main {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      height: 100dvh;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+    }
+    main h1 {
+      text-align: center;
+    }
+    .dark {
+      --bg-color: rgb(69, 66, 87);
+      --text-color: hsl(273, 37%, 93%);
+    }
+  </style>
 </html>
