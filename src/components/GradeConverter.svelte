@@ -35,76 +35,34 @@ input:focus {
 </style>
 
 <script lang="ts">
-import {
-  French,
-  YosemiteDecimal,
-  AI,
-  Aid,
-  Ewbank,
-  Font,
-  Norwegian,
-  Saxon,
-  UIAA,
-  VScale,
-  WI,
-} from "@openbeta/sandbag";
-import type GradeScale from "@openbeta/sandbag/dist/GradeScale";
 import { onMount } from "svelte";
-import type { Grade, Match, GradeScaleType, Tuple } from "../lib/types";
-``;
+import { allGradeScales, blankArray } from "../lib/constants";
+import ScoreRow from "./ScoreRow.svelte";
+import type { Tuple } from "@openbeta/sandbag/dist/GradeScale";
 
 let inputValue = "";
 let jumpToList = false;
 
-const allGradeScales: [GradeScale, GradeScaleType][] = [
-  [Font, "boulder"],
-  [VScale, "boulder"],
-  [YosemiteDecimal, "free-climbing"],
-  [French, "free-climbing"],
-  [Ewbank, "free-climbing"],
-  [Saxon, "free-climbing"],
-  [Norwegian, "free-climbing"],
-  [UIAA, "free-climbing"],
-  [Aid, "aid"],
-  [AI, "ice"],
-  [WI, "ice"],
-];
-
 let inputElement: HTMLInputElement;
-const blankArray = Array.from({ length: 100 }, (_, index) => {
-  return index;
-});
+let matchingIndexes: (number | Tuple)[] = blankArray;
 
-// this should just be for the list of all grades
-const allDifficultiesOfAllSystems: Record<string, Grade>[] = [];
-for (const index of blankArray) {
-  const previousItem = allDifficultiesOfAllSystems[index - 1];
-  const item = allGradeScales.reduce((memo, gradeScale) => {
-    const [scale, type] = gradeScale;
-    const value = scale.getGrade(index);
-    let exists = true;
-    if (previousItem && value) {
-      exists = previousItem?.[scale.displayName]?.value === value;
+$: {
+  if (inputValue) {
+    const nextMatchingIndexes: (number | Tuple)[] = [];
+    for (const [scale] of allGradeScales) {
+      if (scale.isType(inputValue)) {
+        const score = scale.getScore(inputValue);
+        console.log({ score, inputValue });
+        nextMatchingIndexes.push(score);
+      }
     }
-
-    return { ...memo, [scale.displayName]: { value, exists, type } };
-  }, {});
-  allDifficultiesOfAllSystems.push(item);
+    matchingIndexes = nextMatchingIndexes;
+  } else {
+    matchingIndexes = blankArray;
+  }
 }
 
-$: matches = allGradeScales.reduce((memo, gradeScale) => {
-  const [scale, type] = gradeScale;
-  const score = scale.getScore(inputValue);
-  if (score !== -1) {
-    const massagedScore =
-      typeof score === "number"
-        ? score
-        : (score.map((item) => Math.floor(item)) as Tuple);
-    const formattedScore = scale.getGrade(massagedScore);
-    memo.push({ scale: scale.displayName, score, type, formattedScore });
-  }
-  return memo;
-}, [] as Match[]);
+$: console.log({ matchingIndexes });
 
 const handleViewWholeList = () => {
   jumpToList = true;
@@ -140,8 +98,14 @@ onMount(() => {
 
 {#if inputValue}
   <div class="grade-list">
-    {#each matches as match}
-      <div>{match.scale}: {match.formattedScore}</div>
+    {#each matchingIndexes as score}
+      {#if typeof score === "number"}
+        <ScoreRow score="{score}" />
+      {:else}
+        {#each score as subScore}
+          <ScoreRow score="{subScore}" />
+        {/each}
+      {/if}
     {/each}
   </div>
 {/if}
