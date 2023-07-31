@@ -5,33 +5,61 @@
   justify-content: space-between;
 }
 
-.score-row-item {
+.score-cell {
   flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0;
+  border: solid 1px var(--border);
+  border-bottom-width: 0;
+  border-right-width: 0;
+  max-width: 120px;
+  flex: 0 0 70px;
+  overflow: hidden;
 }
 
-.hidden {
-  opacity: 0;
+.score-cell:last-child {
+  border-right-width: 1px;
 }
+
+.score-row:last-child .score-cell {
+  border-bottom-width: 1px;
+}
+
 .emphasized {
   background-color: pink;
 }
 </style>
 
 <script lang="ts">
-import { allDifficultiesOfAllSystems } from "../lib/constants";
+import { createEventDispatcher } from "svelte";
 
-export let score: number;
-const row = allDifficultiesOfAllSystems[score];
-const rowItems = row ? Object.entries(row) : [];
+import { allGradeScales } from "../lib/constants";
+import type { Match } from "../lib/types";
+import type GradeScale from "@openbeta/sandbag/dist/GradeScale";
+import type { Tuple } from "@openbeta/sandbag/dist/GradeScale";
+
+export let match: Match;
+export let suppressEmphasis = false;
+
+const dispatch = createEventDispatcher();
+
+const [score, system] = match;
+
+const handleSelect = (score: number | Tuple, scale: GradeScale) => {
+  const gradeStringValue = scale.getGrade(score);
+  dispatch("select", gradeStringValue);
+};
 </script>
 
 <div class="score-row">
-  {#each rowItems as [_, item]}
-    <div
-      class="score-row-item"
-      class:hidden="{!item.exists}"
-      class:emphasized="{item.emphasized}">
-      {item.value} <small>({score})</small>
-    </div>
+  {#each allGradeScales as [scale]}
+    <button
+      class="score-cell"
+      class:emphasized="{system === scale.name && !suppressEmphasis}"
+      on:click="{() => handleSelect(score, scale)}">
+      <small>{scale.getGrade(score)}</small>
+    </button>
   {/each}
 </div>

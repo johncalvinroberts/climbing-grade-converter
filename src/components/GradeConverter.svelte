@@ -20,6 +20,7 @@ input:focus {
   max-width: 500px;
   width: 100%;
   padding: 10px 0;
+  margin: 0 auto;
 }
 
 .mode-selector {
@@ -30,46 +31,84 @@ input:focus {
   align-items: center;
 }
 .grade-list {
+  max-width: 100%;
+  overflow-x: scroll;
   display: grid;
+}
+
+.header-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.header-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 120px;
+  flex: 0 0 70px;
+  word-break: break-word;
+  font-size: 1rem;
+  text-align: center;
 }
 </style>
 
 <script lang="ts">
 import { onMount } from "svelte";
+import { VScale } from "@openbeta/sandbag";
+import type {
+  GradeScalesTypes,
+  Tuple,
+} from "@openbeta/sandbag/dist/GradeScale";
 import { allGradeScales, blankArray } from "../lib/constants";
 import ScoreRow from "./ScoreRow.svelte";
-import type { Tuple } from "@openbeta/sandbag/dist/GradeScale";
+
+type Match = [number | Tuple, GradeScalesTypes];
 
 let inputValue = "";
 let jumpToList = false;
 
 let inputElement: HTMLInputElement;
-let matchingIndexes: (number | Tuple)[] = blankArray;
+let matchingScores: Match[] = [];
 
 $: {
   if (inputValue) {
-    const nextMatchingIndexes: (number | Tuple)[] = [];
+    const nextMatchingScores: Match[] = [];
     for (const [scale] of allGradeScales) {
       if (scale.isType(inputValue)) {
         const score = scale.getScore(inputValue);
-        console.log({ score, inputValue });
-        nextMatchingIndexes.push(score);
+        const normalizedScore =
+          typeof score === "number"
+            ? Math.floor(score)
+            : (score.map((subScore) => Math.floor(subScore)) as Tuple);
+        nextMatchingScores.push([normalizedScore, scale.name]);
       }
     }
-    matchingIndexes = nextMatchingIndexes;
-  } else {
-    matchingIndexes = blankArray;
+    matchingScores = nextMatchingScores;
+  }
+  if (jumpToList) {
+    matchingScores = blankArray.map((score) => [score, VScale.name]);
+  }
+  if (!jumpToList && !inputValue) {
+    matchingScores = [];
   }
 }
-
-$: console.log({ matchingIndexes });
 
 const handleViewWholeList = () => {
   jumpToList = true;
   inputValue = "";
 };
 
-const handleInput = () => (jumpToList = false);
+const handleInput = () => {
+  jumpToList = false;
+};
+
+const handleSelectGrade = (event: CustomEvent) => {
+  const nextValue = event.detail;
+  inputValue = nextValue;
+  jumpToList = false;
+};
 
 // focus input element on mount
 onMount(() => {
@@ -96,22 +135,20 @@ onMount(() => {
     on:input="{handleInput}" />
 </div>
 
-{#if inputValue}
+{#if matchingScores.length}
   <div class="grade-list">
-    {#each matchingIndexes as score}
-      {#if typeof score === "number"}
-        <ScoreRow score="{score}" />
-      {:else}
-        {#each score as subScore}
-          <ScoreRow score="{subScore}" />
-        {/each}
-      {/if}
+    <div class="header-row">
+      {#each allGradeScales as [scale]}
+        <div class="header-cell">{scale.displayName}</div>
+      {/each}
+    </div>
+    {#each matchingScores as match (match)}
+      <ScoreRow
+        match="{match}"
+        suppressEmphasis="{jumpToList}"
+        on:select="{handleSelectGrade}" />
     {/each}
   </div>
-{/if}
-
-{#if jumpToList}
-  <div>all difficulties here</div>
 {/if}
 
 <div class="mode-selector">

@@ -17,8 +17,8 @@ import type { Grade, GradeScaleType } from "../lib/types";
 export const COLOR_SCHEME_KEY = "🍆";
 
 export const allGradeScales: [GradeScale, GradeScaleType][] = [
-  [Font, "boulder"],
   [VScale, "boulder"],
+  [Font, "boulder"],
   [YosemiteDecimal, "free-climbing"],
   [French, "free-climbing"],
   [Ewbank, "free-climbing"],

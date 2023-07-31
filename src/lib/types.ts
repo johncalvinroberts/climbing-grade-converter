@@ -1,3 +1,7 @@
+import type {
+  GradeScalesTypes,
+  Tuple,
+} from "@openbeta/sandbag/dist/GradeScale";
 export type Grade = {
   value: string;
   exists: boolean;
@@ -5,6 +9,6 @@ export type Grade = {
   type: GradeScaleType;
 };
 
-export type Tuple = [number, number];
-
 export type GradeScaleType = "boulder" | "aid" | "free-climbing" | "ice";
+
+export type Match = [number | Tuple, GradeScalesTypes];
