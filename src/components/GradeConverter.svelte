@@ -42,6 +42,8 @@ input:focus {
   width: 100%;
   display: flex;
   justify-content: space-between;
+  position: sticky;
+  top: 0;
 }
 
 .header-cell {
@@ -53,6 +55,8 @@ input:focus {
   word-break: break-word;
   font-size: 1rem;
   text-align: center;
+  background-color: var(--bg-color);
+  padding: 5px 0;
 }
 
 .select-button {
@@ -143,12 +147,12 @@ onMount(() => {
 </div>
 
 {#if matchingScores.length}
-  <div class="header-row">
-    {#each allGradeScales as [scale]}
-      <div class="header-cell">{scale.displayName}</div>
-    {/each}
-  </div>
   <div class="grade-list">
+    <div class="header-row">
+      {#each allGradeScales as [scale]}
+        <div class="header-cell">{scale.displayName}</div>
+      {/each}
+    </div>
     {#each matchingScores as match (match)}
       <ScoreRow
         match="{match}"
