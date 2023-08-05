@@ -52,6 +52,15 @@ input:focus {
   font-size: 1rem;
   text-align: center;
 }
+
+.select-button {
+  border-radius: 0;
+  background-color: var(--text-color);
+  color: var(--bg-color);
+  padding: 2px 10px;
+  border: solid 1px var(--border);
+  font-size: 1.2rem;
+}
 </style>
 
 <script lang="ts">
@@ -153,7 +162,7 @@ onMount(() => {
 
 <div class="mode-selector">
   {#if !inputValue && !jumpToList}
-    <button on:click="{handleViewWholeList}">
+    <button on:click="{handleViewWholeList}" class="select-button">
       Select a grade from a list instead?
     </button>
   {/if}

@@ -22,6 +22,16 @@ import "@fontsource/space-mono";
     </main>
   </body>
   <style is:global>
+    :root {
+      --bg-color: hsl(273, 37%, 93%);
+      --text-color: rgb(69, 66, 87);
+      --text-color-contrast: #27272c;
+      --input-bg: hsl(246, 96%, 88%);
+      --border: hsl(246, 11%, 12%);
+      --font-family: "Space Mono", sans-serif;
+      font-size: 10px;
+    }
+        
     /* Box sizing rules */
     *,
     *::before,
@@ -43,18 +53,20 @@ import "@fontsource/space-mono";
       margin: 0;
     }
 
-    :root {
-      --bg-color: hsl(273, 37%, 93%);
-      --text-color: rgb(69, 66, 87);
-      --text-color-contrast: #27272c;
-      --input-bg: hsl(246, 96%, 88%);
-      --border: hsl(246, 11%, 12%);
-      font-size: 10px;
+    button {
+      margin: 0;
+      padding: 0;
+      display: block;
     }
+
+    input, button {
+      font-family: var(--font-family)
+    }
+
 
     body {
       min-height: 100dvh;
-      font-family: "Space Mono", sans-serif;
+      font-family: var(--font-family);
       font-size: 1.4rem;
       color: var(--text-color);
       background: var(--bg-color);
