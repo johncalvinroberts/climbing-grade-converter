@@ -17,6 +17,9 @@
   max-width: 120px;
   flex: 0 0 70px;
   overflow: hidden;
+  color: black;
+  background-color: white;
+  font-size: 1rem;
 }
 
 .score-cell:last-child {

@@ -34,6 +34,8 @@ input:focus {
   max-width: 100%;
   overflow-x: scroll;
   display: grid;
+  padding-bottom: 50px;
+  max-height: 50vh;
 }
 
 .header-row {
@@ -87,11 +89,7 @@ $: {
     for (const [scale] of allGradeScales) {
       if (scale.isType(inputValue)) {
         const score = scale.getScore(inputValue);
-        const normalizedScore =
-          typeof score === "number"
-            ? Math.floor(score)
-            : (score.map((subScore) => Math.floor(subScore)) as Tuple);
-        nextMatchingScores.push([normalizedScore, scale.name]);
+        nextMatchingScores.push([score, scale.name]);
       }
     }
     matchingScores = nextMatchingScores;
@@ -145,12 +143,12 @@ onMount(() => {
 </div>
 
 {#if matchingScores.length}
+  <div class="header-row">
+    {#each allGradeScales as [scale]}
+      <div class="header-cell">{scale.displayName}</div>
+    {/each}
+  </div>
   <div class="grade-list">
-    <div class="header-row">
-      {#each allGradeScales as [scale]}
-        <div class="header-cell">{scale.displayName}</div>
-      {/each}
-    </div>
     {#each matchingScores as match (match)}
       <ScoreRow
         match="{match}"
