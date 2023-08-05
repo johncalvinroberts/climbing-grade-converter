@@ -13,7 +13,7 @@
   "dependencies": {
     "@astrojs/svelte": "^3.1.0",
     "@fontsource/space-mono": "^5.0.3",
-    "@openbeta/sandbag": "^0.0.45",
+    "@openbeta/sandbag": "^0.0.48",
     "astro": "^2.7.2"
   },
   "devDependencies": {
